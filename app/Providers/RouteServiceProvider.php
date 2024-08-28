@@ -48,7 +48,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
         RateLimiterFacade::for('password-reset', function (Request $request) {
-            return Limit::perMinute(10); // Ubah sesuai kebutuhan
+            return Limit::perMinute(10);
         });
     }
 }
