@@ -18,7 +18,7 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|max:2048', // Validasi untuk file gambar
+            'image' => 'nullable|image|max:2048',
         ], [
             'title.required' => 'Title is required',
             'content.required' => 'Content is required',
@@ -28,21 +28,18 @@ class PostController extends Controller
             'image.max' => 'The image must not be greater than 2MB',
         ]);
 
-        // Membuat postingan baru
         $post = Post::create([
             'title' => $validated['title'],
             'content' => $validated['content'],
             'category_id' => $validated['category_id'],
         ]);
 
-        // Menambahkan gambar jika ada
         $imageUrl = null;
         if ($request->hasFile('image')) {
             $media = $post->addMedia($request->file('image'))->toMediaCollection('images');
-            $imageUrl = $media->getUrl(); // Mendapatkan URL gambar
+            $imageUrl = $media->getUrl();
         }
 
-        // Menyiapkan data respons
         $response = [
             'id' => $post->id,
             'title' => $post->title,
@@ -66,17 +63,13 @@ class PostController extends Controller
             'title' => 'string',
             'content' => 'string',
             'category_id' => 'exists:categories,id',
-            'image' => 'nullable|image|max:2048', // Validasi untuk gambar
+            'image' => 'nullable|image|max:2048',
         ]);
 
         $post = Post::findOrFail($id);
         $post->update($validated);
-
-        // Mengupdate gambar jika ada
         if ($request->hasFile('image')) {
-            // Hapus gambar lama
             $post->clearMediaCollection('images');
-            // Tambahkan gambar baru
             $post->addMedia($request->file('image'))->toMediaCollection('images');
         }
 
@@ -87,7 +80,6 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        // Hapus gambar yang terkait sebelum menghapus post
         $post->clearMediaCollection('images');
 
         $post->delete();
